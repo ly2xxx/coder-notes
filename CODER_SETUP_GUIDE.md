@@ -143,6 +143,18 @@ docker run -d \
   ghcr.io/coder/coder:latest
 ```
 
+**Windows (PowerShell):**
+```powershell
+docker run -d `
+  --name coder `
+  --restart unless-stopped `
+  -p 7080:7080 `
+  -v /var/run/docker.sock:/var/run/docker.sock `
+  -v ${env:APPDATA}/coder:/home/coder/.config `
+  -e CODER_ACCESS_URL=http://localhost:7080 `
+  ghcr.io/coder/coder:latest
+```
+
 #### With PostgreSQL (production)
 
 ```bash
@@ -172,13 +184,23 @@ docker run -d \
 
 ---
 
-### Option 3: Standalone Binary (macOS/Linux)
+### Option 3: Standalone Binary (macOS/Linux/Windows)
 
 **Best for macOS** (Docker on Mac has limitations with docker.sock binding).
 
 ```bash
 # Download latest Coder binary
 curl -fsSL https://coder.com/install.sh | sh
+
+# Start Coder
+coder server
+```
+
+#### Windows (Winget)
+
+```powershell
+# Install Coder
+winget install -e --id Coder.Coder
 
 # Start Coder
 coder server
