@@ -3,6 +3,9 @@
 **Version:** 2026.02.15  
 **Topics:** Dotfiles, Local folder mounting, File sync workflows
 
+> **⚠️ Coder v2 Note:** User profile dotfiles settings are NOT available in Coder v2 (open source).  
+> Use the CLI (`coder dotfiles <repo>`) or template-based dotfiles instead.
+
 ---
 
 ## 🔹 Dotfiles in Coder
@@ -68,26 +71,43 @@ git remote add origin https://github.com/yourusername/dotfiles.git
 git push -u origin main
 ```
 
-#### Step 2: Add Dotfiles to Coder Profile
+#### Step 2: Apply Dotfiles in Coder
 
-1. **Log in to Coder** (e.g., https://test.pit-1.try.coder.app)
-2. Click your **profile icon** (top-right) → **Settings**
-3. Go to **Dotfiles** section
-4. Add your repo URL:
-   ```
-   https://github.com/yourusername/dotfiles
-   ```
-5. (Optional) Specify install script path: `install.sh`
-6. **Save**
+**⚠️ Important:** Coder v2 (open source) does NOT have a user profile dotfiles setting. You have 3 options:
 
-#### Step 3: Test on New Workspace
+**Option A: CLI Command (Manual)**
+```bash
+# SSH into workspace
+coder ssh my-workspace
 
-Create a new workspace → Coder will:
-1. Clone your dotfiles repo to `~/dotfiles`
-2. Run `install.sh` (if present)
-3. Apply your configs
+# Apply dotfiles
+coder dotfiles https://github.com/yourusername/dotfiles
+```
 
-**Verify:**
+**Option B: Template-Based (Recommended - Automatic)**
+
+Template admin adds dotfiles module to `main.tf`:
+```hcl
+module "dotfiles" {
+  source   = "registry.coder.com/modules/dotfiles/coder"
+  version  = "1.0.15"
+  agent_id = coder_agent.main.id
+}
+```
+
+When users create a workspace from this template, they'll be prompted for their dotfiles URL!
+
+**Option C: ~/personalize Script (Template Feature)**
+
+Templates can enable a `~/personalize` script that runs on startup:
+```bash
+#!/bin/bash
+# ~/personalize
+coder dotfiles https://github.com/yourusername/dotfiles
+```
+
+#### Step 3: Verify Dotfiles Applied
+
 ```bash
 # SSH into workspace
 coder ssh my-workspace
