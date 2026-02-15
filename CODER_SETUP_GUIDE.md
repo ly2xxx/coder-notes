@@ -89,13 +89,13 @@ services:
 ```bash
 # Add to docker-compose.yaml environment section:
 environment:
-  CODER_ACCESS_URL: http://localhost:7080
+  CODER_ACCESS_URL: http://localhost:3000
 ```
 
 **For remote access:**
 ```bash
 environment:
-  CODER_ACCESS_URL: http://your-server-ip:7080
+  CODER_ACCESS_URL: http://your-server-ip:3000
   # Or: https://coder.yourdomain.com (requires reverse proxy)
 ```
 
@@ -115,7 +115,7 @@ docker compose logs -f coder
 
 Open your browser:
 ```
-http://localhost:7080
+http://localhost:3000
 ```
 
 **First-time setup:**
@@ -135,11 +135,11 @@ http://localhost:7080
 docker run -d \
   --name=coder \
   --restart=unless-stopped \
-  -p 7080:7080 \
+  -p 3000:3000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/.config/coder:/home/coder/.config \
   --group-add $(getent group docker | cut -d: -f3) \
-  -e CODER_ACCESS_URL=http://localhost:7080 \
+  -e CODER_ACCESS_URL=http://localhost:3000 \
   ghcr.io/coder/coder:latest
 ```
 
@@ -148,10 +148,10 @@ docker run -d \
 docker run -d `
   --name coder `
   --restart unless-stopped `
-  -p 7080:7080 `
+  -p 3000:3000 `
   -v /var/run/docker.sock:/var/run/docker.sock `
   -v ${env:APPDATA}/coder:/home/coder/.config `
-  -e CODER_ACCESS_URL=http://localhost:7080 `
+  -e CODER_ACCESS_URL=http://localhost:3000 `
   ghcr.io/coder/coder:latest
 ```
 
@@ -173,11 +173,11 @@ docker run -d \
   --name=coder \
   --restart=unless-stopped \
   --link coder-db:postgres \
-  -p 7080:7080 \
+  -p 3000:3000 \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -v ~/.config/coder:/home/coder/.config \
   --group-add $(getent group docker | cut -d: -f3) \
-  -e CODER_ACCESS_URL=http://localhost:7080 \
+  -e CODER_ACCESS_URL=http://localhost:3000 \
   -e CODER_PG_CONNECTION_URL=postgres://coder:coder@postgres:5432/coder?sslmode=disable \
   ghcr.io/coder/coder:latest
 ```
@@ -206,7 +206,7 @@ winget install -e --id Coder.Coder
 coder server
 ```
 
-Access at `http://localhost:7080`
+Access at `http://localhost:3000`
 
 ---
 
@@ -219,7 +219,7 @@ Key settings (add to `docker-compose.yaml` or `docker run`):
 ```yaml
 environment:
   # Required: External URL for Coder
-  CODER_ACCESS_URL: http://localhost:7080
+  CODER_ACCESS_URL: http://localhost:3000
   
   # Database (if using PostgreSQL)
   CODER_PG_CONNECTION_URL: postgres://coder:password@postgres:5432/coder?sslmode=disable
@@ -249,7 +249,7 @@ Full config reference: https://coder.com/docs/admin/setup
 
 ### Quick Start: Docker Template
 
-1. **Log in to Coder** (http://localhost:7080)
+1. **Log in to Coder** (http://localhost:3000)
 2. Click **Templates** → **Create Template**
 3. Choose **Docker** starter template
 4. Customize (or use defaults)
@@ -344,7 +344,7 @@ sudo apt install caddy
 
 # Configure /etc/caddy/Caddyfile
 coder.yourdomain.com {
-  reverse_proxy localhost:7080
+  reverse_proxy localhost:3000
 }
 
 # Restart Caddy
@@ -359,7 +359,7 @@ server {
     server_name coder.yourdomain.com;
     
     location / {
-        proxy_pass http://localhost:7080;
+        proxy_pass http://localhost:3000;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -387,7 +387,7 @@ curl -fsSL https://tailscale.com/install.sh | sh
 sudo tailscale up
 
 # Access via Tailscale IP
-CODER_ACCESS_URL: http://100.x.y.z:7080
+CODER_ACCESS_URL: http://100.x.y.z:3000
 ```
 
 ---
@@ -411,7 +411,7 @@ CODER_ACCESS_URL: http://100.x.y.z:7080
 **Firewall rules:**
 ```bash
 # Only allow from specific IPs
-sudo ufw allow from YOUR_IP to any port 7080
+sudo ufw allow from YOUR_IP to any port 3000
 ```
 
 **Or use VPN/Tailscale** for zero-trust access.
@@ -456,7 +456,7 @@ docker compose exec coder /bin/sh
 
 ```bash
 # Login to Coder
-coder login http://localhost:7080
+coder login http://localhost:3000
 
 # List workspaces
 coder list
@@ -481,7 +481,7 @@ coder templates create my-template --directory ./template
 
 ## 🐛 Troubleshooting
 
-### Issue: Cannot access Coder at localhost:7080
+### Issue: Cannot access Coder at localhost:3000
 
 **Check if running:**
 ```bash
@@ -493,9 +493,9 @@ docker compose ps
 docker compose logs coder
 ```
 
-**Common fix:** Ensure port 7080 is not in use:
+**Common fix:** Ensure port 3000 is not in use:
 ```bash
-sudo lsof -i :7080
+sudo lsof -i :3000
 ```
 
 ### Issue: "Permission denied" connecting to Docker socket
@@ -518,7 +518,7 @@ docker ps
 **Fix:** Set correct access URL:
 ```yaml
 environment:
-  CODER_ACCESS_URL: http://YOUR_ACTUAL_IP:7080
+  CODER_ACCESS_URL: http://YOUR_ACTUAL_IP:3000
 ```
 
 ### Issue: Docker-based workspace fails to provision
@@ -644,7 +644,7 @@ After setup:
 ## ⚠️ Common Gotchas
 
 1. **macOS + Docker Desktop:** Limited functionality with docker.sock binding → use standalone binary
-2. **Firewall rules:** Ensure 7080 accessible (or configured port)
+2. **Firewall rules:** Ensure 3000 accessible (or configured port)
 3. **Access URL mismatch:** Must match how you access Coder externally
 4. **Database persistence:** Use volumes or external PostgreSQL for production
 5. **Docker group permissions:** Critical for Docker template provisioning
