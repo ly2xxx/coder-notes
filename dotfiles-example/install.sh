@@ -79,6 +79,67 @@ else
 fi
 
 echo ""
+
+# Install Playwright with Chromium
+echo "🎭 Installing Playwright with Chromium..."
+
+# Check if Node.js is installed
+if ! command -v node &> /dev/null; then
+    echo "⚠️  Node.js not found, installing..."
+    if command -v apt-get &> /dev/null; then
+        sudo apt-get update
+        sudo apt-get install -y nodejs npm
+    elif command -v yum &> /dev/null; then
+        sudo yum install -y nodejs npm
+    else
+        echo "❌ Cannot install Node.js automatically. Please install manually."
+        exit 1
+    fi
+fi
+
+# Install Playwright system dependencies (Ubuntu/Debian)
+if command -v apt-get &> /dev/null; then
+    echo "📦 Installing Playwright system dependencies..."
+    sudo apt-get update
+    sudo apt-get install -y \
+        libnss3 \
+        libatk1.0-0 \
+        libatk-bridge2.0-0 \
+        libcups2 \
+        libdrm2 \
+        libxkbcommon0 \
+        libxcomposite1 \
+        libxdamage1 \
+        libxrandr2 \
+        libgbm1 \
+        libasound2 \
+        libpango-1.0-0 \
+        libcairo2 \
+        fonts-liberation \
+        xdg-utils
+fi
+
+# Install Playwright globally
+echo "📦 Installing Playwright globally..."
+sudo npm install -g playwright
+
+# Install Chromium browser
+echo "🌐 Installing Chromium browser..."
+npx playwright install chromium --with-deps
+
+echo ""
+echo "✅ Playwright + Chromium installed!"
+echo ""
+
+# Test Playwright installation
+echo "🧪 Testing Playwright installation..."
+if node -e "const { chromium } = require('playwright'); console.log('✅ Playwright import successful!');" 2>/dev/null; then
+    echo "✅ Playwright is ready to use!"
+else
+    echo "⚠️  Playwright installed but import test failed (may need to restart shell)"
+fi
+
+echo ""
 echo "======================================"
 echo "✨ Dotfiles setup complete! ✨"
 echo "======================================"
@@ -86,5 +147,6 @@ echo ""
 echo "Next steps:"
 echo "1. Restart your shell or run: source ~/.bashrc"
 echo "2. Test Gemini: python3 -c 'import google.generativeai as genai; print(genai.__version__)'"
-echo "3. Enjoy your personalized workspace!"
+echo "3. Test Playwright: node -e \"require('playwright'); console.log('OK')\""
+echo "4. Enjoy your personalized workspace!"
 echo ""
