@@ -1,37 +1,52 @@
-FROM ubuntu
+FROM ubuntu:22.04
 
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install base packages and certificates
+RUN apt-get update \
+    && apt-get install -y \
+    ca-certificates \
+    curl \
+    gnupg \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 from NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
+
+# Install system packages and Playwright dependencies
 RUN apt-get update \
     && apt-get install -y \
     sudo \
-    curl \
     git \
     python3 \
     python3-pip \
-    # Node.js (required for Playwright)
-    nodejs \
-    npm \
     # Playwright system dependencies for Chromium
     libnss3 \
+    libnspr4 \
     libatk1.0-0 \
     libatk-bridge2.0-0 \
     libcups2 \
     libdrm2 \
+    libdbus-1-3 \
     libxkbcommon0 \
     libxcomposite1 \
     libxdamage1 \
+    libxfixes3 \
     libxrandr2 \
     libgbm1 \
     libasound2 \
     libpango-1.0-0 \
     libcairo2 \
-    libxshmfence1 \
     fonts-liberation \
     libappindicator3-1 \
     xdg-utils \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Playwright globally and Chromium browser
-RUN npm install -g playwright \
+RUN npm install -g playwright@latest \
     && npx playwright install chromium --with-deps
 
 ARG USER=coder
