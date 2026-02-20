@@ -45,9 +45,10 @@ RUN apt-get update \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Playwright globally and Chromium browser
-RUN npm install -g playwright@latest \
-    && npx playwright install chromium --with-deps
+# Install Python Playwright package and Chromium browser to system-wide location
+ENV PLAYWRIGHT_BROWSERS_PATH=/usr/local/share/playwright
+RUN pip3 install playwright \
+    && python3 -m playwright install chromium --with-deps
 
 ARG USER=coder
 RUN useradd --groups sudo --no-create-home --shell /bin/bash ${USER} \
