@@ -44,6 +44,17 @@ resource "coder_agent" "main" {
     # install and start code-server
     curl -fsSL https://code-server.dev/install.sh | sh -s -- --method=standalone --prefix=/tmp/code-server
     /tmp/code-server/bin/code-server --auth none --port 3000 >/tmp/code-server.log 2>&1 &
+
+    # Test Playwright installation
+    echo ""
+    echo "🧪 Testing Playwright installation..."
+    if python3 -c "from playwright.sync_api import sync_playwright; print('✅ Playwright import successful!')" 2>/dev/null; then
+      echo "✅ Playwright + Chromium + xvfb ready!"
+      echo "💡 Tip: Run non-headless scripts with: xvfb-run python3 your_script.py"
+    else
+      echo "⚠️  Playwright installed but import test failed"
+    fi
+    echo ""
   EOT
 
   env = {

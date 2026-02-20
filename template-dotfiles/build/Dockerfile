@@ -22,6 +22,7 @@ RUN apt-get update \
     git \
     python3 \
     python3-pip \
+    xvfb \
     # Playwright system dependencies for Chromium
     libnss3 \
     libnspr4 \
